@@ -1,12 +1,12 @@
 package com.hengthay.ecommercebackendspring.auth;
 
-import com.hengthay.ecommercebackendspring.users.UserAccessDeniedException;
-import com.hengthay.ecommercebackendspring.users.UserNotFoundException;
+import com.hengthay.ecommercebackendspring.users.User;
 import com.hengthay.ecommercebackendspring.users.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +14,15 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
 
+    public User getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userId = (Long) authentication.getPrincipal();
+
+        return userRepository.findById(userId).orElse(null);
+    }
 
     public LoginResponse login(LoginRequest request) {
 
@@ -25,6 +33,25 @@ public class AuthService {
                 )
         );
 
-        return new LoginResponse("Login successful.");
+        var user = userRepository.findUserByEmail(request.getEmail()).orElseThrow();
+
+        var accessToken = jwtService.getAccessToken(user);
+        var refreshToken = jwtService.getRefreshToken(user);
+
+        return new LoginResponse(accessToken, refreshToken);
+    }
+
+    public Jwt refreshAccessToken(String refreshToken) {
+        Jwt jwt = jwtService.validateToken(refreshToken);
+
+        if (jwt == null || jwt.isExpired()) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+
+        var userId = jwt.getUserId();
+
+        var user = userRepository.findById(userId).orElseThrow();
+
+        return jwtService.getAccessToken(user);
     }
 }
