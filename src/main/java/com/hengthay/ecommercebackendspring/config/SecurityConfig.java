@@ -1,6 +1,7 @@
 package com.hengthay.ecommercebackendspring.config;
 
 import com.hengthay.ecommercebackendspring.auth.JwtAuthenticationFilter;
+import com.hengthay.ecommercebackendspring.users.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,12 +56,14 @@ public class SecurityConfig {
                 .sessionManagement(c ->
                         c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(c -> {
+                    c.requestMatchers("/api/categories/**").hasRole(Role.ADMIN.name());
                     c.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll();
                     c.requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll();
                     c.anyRequest().authenticated();
                 })
                 // Check token before access to endpoints
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                // This exception use to handle user authenticated but does not have permission to access
                 .exceptionHandling(c -> {
                     c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
                     c.accessDeniedHandler((((request, response, accessDeniedException) ->

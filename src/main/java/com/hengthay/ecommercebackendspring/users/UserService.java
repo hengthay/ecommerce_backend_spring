@@ -57,7 +57,7 @@ public class UserService {
         System.out.println("Converted to Entity: " + userEntity);
 
         // Hashing Password
-         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         var user = userRepository.save(userEntity);
 
         return userMapper.toDto(user);
@@ -102,9 +102,9 @@ public class UserService {
     public void changePassword(Long id, ChangePasswordRequest request) {
         var user = userRepository.findById(id).orElseThrow();
 
-        if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new UserAccessDeniedException("Password does not match");
-        }
+//        if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+//            throw new UserAccessDeniedException("Password does not match");
+//        }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);

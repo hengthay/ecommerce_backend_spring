@@ -11,5 +11,5 @@ spring:
     import: optional:file:.env[.properties]
   jwt:
     secret: ${JWT_SECRET}
-    accessTokenExpiration: 120 #1h
+    accessTokenExpiration: 1800 #30mn
     refreshTokenExpiration: 604800 #7d

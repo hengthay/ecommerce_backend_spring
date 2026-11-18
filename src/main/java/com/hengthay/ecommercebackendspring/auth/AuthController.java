@@ -1,15 +1,18 @@
 package com.hengthay.ecommercebackendspring.auth;
 
+import com.hengthay.ecommercebackendspring.config.ErrorDto;
 import com.hengthay.ecommercebackendspring.users.UserDto;
 import com.hengthay.ecommercebackendspring.users.UserMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.Map;
 
 @RestController
@@ -23,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public JwtReponse login(
-            @RequestBody LoginRequest request,
+            @Valid @RequestBody LoginRequest request,
             HttpServletResponse response
     ) {
         var loginResult = authService.login(request);
@@ -71,20 +74,20 @@ public class AuthController {
                 Map.of("status", "ok")
         );
     }
-//    @ExceptionHandler(UserAccessDeniedException.class)
-//    public ResponseEntity<ErrorDto> handleBadCredentialsException(Exception exception) {
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-//                new ErrorDto(
-//                        404,
-//                        exception.getMessage(),
-//                        null,
-//                        Instant.now()
-//                )
-//        );
-//    }
-    // Handle unauthorize if invalid information
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Void> handleBadCredentialsException() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<ErrorDto> handleBadCredentialsException(Exception exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new ErrorDto(
+                        404,
+                        exception.getMessage(),
+                        null,
+                        Instant.now()
+                )
+        );
     }
+    // Handle unauthorize if invalid information
+//    @ExceptionHandler(BadCredentialsException.class)
+//    public ResponseEntity<Void> handleBadCredentialsException() {
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//    }
 }
