@@ -1,5 +1,6 @@
 package com.hengthay.ecommercebackendspring.categories;
 
+import com.hengthay.ecommercebackendspring.products.Product;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -33,6 +36,9 @@ public class Category {
 
     @Column(name = "is_active")
     private boolean active = true;
+
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private List<Product> products = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at")
