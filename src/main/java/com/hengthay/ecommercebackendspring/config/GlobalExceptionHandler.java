@@ -35,7 +35,12 @@ public class GlobalExceptionHandler {
 
         // Iterate through exception and add it to errors object
         exception.getBindingResult().getFieldErrors().forEach(
-                error -> errors.put(error.getField(), error.getDefaultMessage())
+                error -> {
+                    String message = error.isBindingFailure()
+                            ? "Invalid format for " + error.getField()
+                            : error.getDefaultMessage();
+                    errors.put(error.getField(), message);
+                }
         );
 
         // Send back the error messages

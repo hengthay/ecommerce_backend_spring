@@ -2,11 +2,11 @@ package com.hengthay.ecommercebackendspring.categories;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class CreateCategoryRequest {
     @NotBlank(message = "Category name is required.")
     @Size(max = 255, message = "Category name should be less than 255 characters.")

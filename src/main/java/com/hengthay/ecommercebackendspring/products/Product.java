@@ -14,7 +14,6 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Table(name = "products", schema = "ecommerce_backend_spring")
 public class Product {
     @Id
@@ -29,7 +28,7 @@ public class Product {
     private BigDecimal price;
 
     @Column(name = "stock")
-    private Integer stock;
+    private Integer stock = 0;
 
     @Column(name = "image_url")
     private String imageUrl;
@@ -38,7 +37,7 @@ public class Product {
     private String description;
 
     @Column(name = "is_active")
-    private boolean active;
+    private boolean active = true;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id")
