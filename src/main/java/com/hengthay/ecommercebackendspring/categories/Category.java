@@ -16,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Table(name = "categories", schema = "ecommerce_backend_spring")
 public class Category {
     @Id
