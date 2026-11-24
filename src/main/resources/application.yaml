@@ -16,7 +16,7 @@ spring:
       max-request-size: 10MB
   jwt:
     secret: ${JWT_SECRET}
-    accessTokenExpiration: 1800 #30mn
+    accessTokenExpiration: 3600 #30mn
     refreshTokenExpiration: 604800 #7d
 file:
   upload-dir: uploads
