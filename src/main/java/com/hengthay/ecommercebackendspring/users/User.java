@@ -1,11 +1,14 @@
 package com.hengthay.ecommercebackendspring.users;
 
+import com.hengthay.ecommercebackendspring.addresses.Address;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -35,6 +38,9 @@ public class User {
 
     @Column(name = "is_active")
     private boolean active = true;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Address> addresses = new LinkedHashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at")

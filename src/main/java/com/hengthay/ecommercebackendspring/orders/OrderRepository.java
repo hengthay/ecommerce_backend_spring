@@ -12,14 +12,14 @@ import java.util.UUID;
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     @Override
-    @EntityGraph(attributePaths = {"items.product", "customer"})
+    @EntityGraph(attributePaths = {"items.product", "customer", "address"})
     List<Order> findAll();
 
-    @EntityGraph(attributePaths = {"items.product", "customer"})
+    @EntityGraph(attributePaths = {"items.product", "customer", "address"})
     @Query("select o from Order o where o.customer.id = :userId")
     List<Order> getOrderByCustomer(@Param("userId") Long userId);
 
-    @EntityGraph(attributePaths = {"items.product", "customer"})
+    @EntityGraph(attributePaths = {"items.product", "customer", "address"})
     @Query("select o from Order o where o.id = :orderId")
     Optional<Order> getOrderWithItems(@Param("orderId") UUID orderId);
 }

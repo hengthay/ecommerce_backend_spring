@@ -1,5 +1,6 @@
 package com.hengthay.ecommercebackendspring.orders;
 
+import com.hengthay.ecommercebackendspring.addresses.Address;
 import com.hengthay.ecommercebackendspring.carts.Cart;
 import com.hengthay.ecommercebackendspring.users.User;
 import jakarta.persistence.*;
@@ -9,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.ws.soap.addressing.server.annotation.Address;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -52,8 +52,9 @@ public class Order {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "address_id")
-    private Long addressId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
     @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<OrderItem> items = new LinkedHashSet<>();

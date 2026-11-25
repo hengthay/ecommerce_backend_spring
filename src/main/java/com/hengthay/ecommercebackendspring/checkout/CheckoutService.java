@@ -1,5 +1,7 @@
 package com.hengthay.ecommercebackendspring.checkout;
 
+import com.hengthay.ecommercebackendspring.addresses.AddressNotFoundException;
+import com.hengthay.ecommercebackendspring.addresses.AddressRepository;
 import com.hengthay.ecommercebackendspring.auth.AuthService;
 import com.hengthay.ecommercebackendspring.carts.CartEmptyException;
 import com.hengthay.ecommercebackendspring.carts.CartNotFoundException;
@@ -20,6 +22,7 @@ public class CheckoutService {
     private final AuthService authService;
     private final OrderRepository orderRepository;
     private final CartService cartService;
+    private final AddressRepository addressRepository;
 
     public CheckoutResponse checkout(CheckoutRequest request) throws AccessDeniedException {
         var cart = cartRepository.findById(request.getCartId()).orElse(null);
@@ -32,8 +35,11 @@ public class CheckoutService {
 
         var order = Order.fromCartItem(cart, authService.getCurrentUser());
 
+        var address = addressRepository.findActiveTrueById(request.getAddressId()).orElseThrow(() -> {
+            throw new AddressNotFoundException("Address not found.");
+        });
         // set shipping address
-        order.setAddressId(request.getAddressId());
+        order.setAddress(address);
         // save order
         orderRepository.save(order);
 

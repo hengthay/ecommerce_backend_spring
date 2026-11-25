@@ -14,5 +14,5 @@ public class OrderDto {
     private LocalDateTime createdAt;
     private List<OrderItemDto> items;
     private BigDecimal totalAmount;
-    private Long addressId;
+    private ShippingAddressDto addressDto;
 }
