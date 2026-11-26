@@ -29,13 +29,19 @@ public class ProductController {
                 .body(productService.getProducts(page, size, sortDir));
     }
 
-    @RequestMapping("/all")
+    @GetMapping("/active")
+    public ResponseEntity<List<ProductDto>> getActiveProducts() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(productService.getActiveProducts());
+    }
+
+    @GetMapping("/all")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getAllProducts());
     }
 
-    @RequestMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getProductById(id));

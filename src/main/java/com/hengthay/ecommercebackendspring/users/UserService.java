@@ -1,5 +1,6 @@
 package com.hengthay.ecommercebackendspring.users;
 
+import com.hengthay.ecommercebackendspring.auth.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
     // Get all users from DB
     public List<UserDto> getAllUsers() {
@@ -52,9 +54,13 @@ public class UserService {
     }
 
     public UserDto registerUser(RegisterUserRequest request) {
-        System.out.println("Incoming as DTO: " + request);
+        // check existing email and throw error
+        userRepository.findByEmailAndActiveTrue(request.getEmail()).ifPresent(existingUser
+                -> {
+            throw new EmailAlreadyExistsException("Email is already in use.");
+        });
+
         var userEntity = userMapper.toEntity(request);
-        System.out.println("Converted to Entity: " + userEntity);
 
         // Hashing Password
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
@@ -65,10 +71,14 @@ public class UserService {
 
     public UserDto updateUser(Long id, UpdateUserRequest request) {
         var user = userRepository.findById(id).orElse(null);
+        var currentUser = authService.getCurrentUser();
 
         if(user == null)
             throw new UserNotFoundException("User not found.");
 
+        if(!currentUser.getId().equals(user.getId())) {
+           throw new UserAccessDeniedException("Access Denied. You don't have permission to take action.");
+        }
         userMapper.update(request, user);
 
         userRepository.save(user);

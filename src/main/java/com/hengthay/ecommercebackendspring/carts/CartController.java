@@ -34,7 +34,7 @@ public class CartController {
         );
     }
 
-    @RequestMapping("/me")
+    @GetMapping("/me")
     public ResponseEntity<List<CartDto>> getMyCarts() {
         return ResponseEntity.ok(cartService.getMyCarts());
     }

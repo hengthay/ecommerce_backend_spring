@@ -19,4 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @EntityGraph(attributePaths = {"category"})
     Page<Product> findAllByActiveTrue(Pageable pageable);
+
+    @EntityGraph(attributePaths = "category")
+    List<Product> findByActiveTrue();
 }

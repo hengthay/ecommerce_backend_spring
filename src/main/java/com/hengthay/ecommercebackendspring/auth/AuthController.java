@@ -3,6 +3,7 @@ package com.hengthay.ecommercebackendspring.auth;
 import com.hengthay.ecommercebackendspring.config.ErrorDto;
 import com.hengthay.ecommercebackendspring.users.UserDto;
 import com.hengthay.ecommercebackendspring.users.UserMapper;
+import com.hengthay.ecommercebackendspring.users.UserNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -74,8 +75,21 @@ public class AuthController {
                 Map.of("status", "ok")
         );
     }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorDto> handleBadCredentialsException(Exception exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new ErrorDto(
+                        404,
+                        exception.getMessage(),
+                        null,
+                        Instant.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleUserNotFoundException(UserNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                 new ErrorDto(
                         404,

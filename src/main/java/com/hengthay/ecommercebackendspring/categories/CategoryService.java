@@ -63,6 +63,10 @@ public class CategoryService {
     public CategoryDto createCategory(
             CreateCategoryRequest request
     ) {
+        categoryRepository.findByName(request.getName()).ifPresent(exists -> {
+            throw new CategoryNameAlreadyExistException("Category name is already in use.");
+        });
+
         var categoryEntity = categoryMapper.toEntity(request);
         categoryRepository.save(categoryEntity);
 
@@ -73,6 +77,10 @@ public class CategoryService {
             Long id,
             UpdateCategoryRequest request
     ) {
+        categoryRepository.findByName(request.getName()).ifPresent(exists -> {
+            throw new CategoryNameAlreadyExistException("Category name is already in use.");
+        });
+
         var category = categoryRepository.findById(id).orElse(null);
 
         if(category == null)

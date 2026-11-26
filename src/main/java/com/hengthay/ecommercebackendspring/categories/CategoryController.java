@@ -27,12 +27,12 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategories());
     }
 
-    @RequestMapping("/in-active")
+    @GetMapping("/in-active")
     public ResponseEntity<List<CategoryDto>> getOnlyInActiveCategories() {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getOnlyInActiveCategories());
     }
 
-    @RequestMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
@@ -95,6 +95,21 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 new ErrorDto(
                         404,
+                        exception.getMessage(),
+                        null,
+                        Instant.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(CategoryNameAlreadyExistException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateCategoryNameException(
+            CategoryNameAlreadyExistException exception
+    ) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                new ErrorDto(
+                        409,
                         exception.getMessage(),
                         null,
                         Instant.now()

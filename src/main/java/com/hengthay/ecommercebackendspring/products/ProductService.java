@@ -35,6 +35,20 @@ public class ProductService {
         return products;
     }
 
+    public List<ProductDto> getActiveProducts() {
+        var products = productRepository.findByActiveTrue()
+                .stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        if(products.isEmpty()) {
+            throw new ProductNotFoundException("Product not found.");
+        }
+
+        return products;
+    }
+
+
     public ProductPageResponse getProducts(int page, int size, String sortDir) {
         int safeSize = Math.clamp(size, 1, 100);
         int safePage = Math.max(page, 0);

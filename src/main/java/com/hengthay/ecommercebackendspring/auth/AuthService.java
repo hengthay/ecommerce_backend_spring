@@ -1,6 +1,7 @@
 package com.hengthay.ecommercebackendspring.auth;
 
 import com.hengthay.ecommercebackendspring.users.User;
+import com.hengthay.ecommercebackendspring.users.UserNotFoundException;
 import com.hengthay.ecommercebackendspring.users.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,9 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) {
+        var user = userRepository.findByEmailAndActiveTrue(request.getEmail()).orElseThrow(() -> {
+            throw new UserNotFoundException("User not found.");
+        });
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -32,8 +36,6 @@ public class AuthService {
                         request.getPassword()
                 )
         );
-
-        var user = userRepository.findUserByEmail(request.getEmail()).orElseThrow();
 
         var accessToken = jwtService.getAccessToken(user);
         var refreshToken = jwtService.getRefreshToken(user);

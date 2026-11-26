@@ -3,6 +3,7 @@ package com.hengthay.ecommercebackendspring.users;
 import com.hengthay.ecommercebackendspring.config.ErrorDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getOnlyActiveUsers());
     }
 
-    @RequestMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
@@ -47,7 +48,7 @@ public class UserController {
         return ResponseEntity.status(200).body(userService.updateUser(id, request));
     }
 
-    @PutMapping("/{id}/role")
+    @PatchMapping("/{id}/role")
     public ResponseEntity<UserDto> updateUserRole(
             @PathVariable Long id,
             @Valid @RequestBody AdminUpdateUserRoleRequest request)
@@ -68,7 +69,7 @@ public class UserController {
             @Valid @RequestBody ChangePasswordRequest request)
     {
         userService.changePassword(id, request);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/activate-user")
@@ -104,6 +105,20 @@ public class UserController {
                         null,
                         Instant.now()
                 )
+        );
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateEmailException(
+            EmailAlreadyExistsException ex
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        new ErrorDto(
+                                409,
+                                ex.getMessage(),
+                                null,
+                                Instant.now()
+                        )
         );
     }
 }

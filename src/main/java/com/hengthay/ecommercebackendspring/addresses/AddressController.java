@@ -66,7 +66,7 @@ public class AddressController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping("/{id}/activate")
+    @PatchMapping("/{id}/activate")
     public ResponseEntity<Void> activateAddress(
             @PathVariable Long id
     ) {
