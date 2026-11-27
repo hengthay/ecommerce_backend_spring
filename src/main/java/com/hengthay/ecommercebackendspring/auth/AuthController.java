@@ -26,7 +26,7 @@ public class AuthController {
     private final UserMapper userMapper;
 
     @PostMapping("/login")
-    public JwtReponse login(
+    public JwtResponse login(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response
     ) {
@@ -41,11 +41,11 @@ public class AuthController {
         // add cookie to response
         response.addCookie(cookie);
 
-        return new JwtReponse(loginResult.getAccessToken().toString());
+        return new JwtResponse(loginResult.getAccessToken().toString());
     };
 
     @PostMapping("/refresh")
-    public JwtReponse refresh(
+    public JwtResponse refresh(
             @CookieValue(value = "refreshToken", required = false) String refreshToken
     ) {
         if (refreshToken == null || refreshToken.isBlank()) {
@@ -54,7 +54,7 @@ public class AuthController {
 
         var accessToken = authService.refreshAccessToken(refreshToken);
 
-        return new JwtReponse(accessToken.toString());
+        return new JwtResponse(accessToken.toString());
     }
 
     @GetMapping("/me")
@@ -99,9 +99,4 @@ public class AuthController {
                 )
         );
     }
-    // Handle unauthorize if invalid information
-//    @ExceptionHandler(BadCredentialsException.class)
-//    public ResponseEntity<Void> handleBadCredentialsException() {
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//    }
 }

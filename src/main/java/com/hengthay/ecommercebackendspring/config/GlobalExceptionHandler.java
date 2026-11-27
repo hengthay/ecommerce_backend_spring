@@ -1,5 +1,6 @@
 package com.hengthay.ecommercebackendspring.config;
 
+import com.hengthay.ecommercebackendspring.products.InsufficientStockException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -57,9 +58,6 @@ public class GlobalExceptionHandler {
     // General unexpected errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleGeneralErrors(Exception exception) {
-
-        exception.printStackTrace();
-
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(
                         new ErrorDto(
@@ -69,5 +67,29 @@ public class GlobalExceptionHandler {
                                 Instant.now()
                         )
                 );
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorDto> handleInsufficientStock(InsufficientStockException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorDto(
+                        HttpStatus.BAD_REQUEST.value(),
+                        ex.getMessage(),
+                        null,
+                        Instant.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorDto> handleOnIllegalStock(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorDto(
+                        HttpStatus.BAD_REQUEST.value(),
+                        ex.getMessage(),
+                        null,
+                        Instant.now()
+                )
+        );
     }
 }
